@@ -1,9 +1,8 @@
-// client/src/pages/ProjectDetail.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import API from "../api/axios";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -20,29 +19,29 @@ export default function ProjectDetail() {
       const res = await API.get(`/projects/${id}`);
       setProject(res.data.project);
       setTasks(res.data.tasks);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load project.");
     }
   };
 
   const handleDeleteTask = async (taskId) => {
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    if (!window.confirm("Delete this task?")) return;
     try {
       await API.delete(`/tasks/${taskId}`);
       toast.success("Task deleted.");
       fetchProject();
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete task.");
     }
   };
 
-  const handleToggleStatus = async (taskId, currentStatus) => {
+  const handleToggleStatus = async (taskId, status) => {
     try {
-      const newStatus = currentStatus === "pending" ? "completed" : "pending";
+      const newStatus = status === "pending" ? "completed" : "pending";
       await API.put(`/tasks/${taskId}`, { status: newStatus });
-      toast.success(`Task marked as ${newStatus}`);
+      toast.success(`Task marked ${newStatus}.`);
       fetchProject();
-    } catch (err) {
+    } catch {
       toast.error("Failed to update status.");
     }
   };
@@ -53,7 +52,6 @@ export default function ProjectDetail() {
         <>
           <h1 className="text-2xl font-bold mb-2">{project.name}</h1>
           <p className="text-gray-600 mb-4">{project.description}</p>
-
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Tasks</h2>
             <Button
@@ -63,42 +61,24 @@ export default function ProjectDetail() {
               + Add Task
             </Button>
           </div>
-
           {tasks.length === 0 ? (
-            <p>No tasks yet. Click + Add Task to create one.</p>
+            <p>No tasks yet.</p>
           ) : (
             <ul className="space-y-3">
               {tasks.map((task) => (
-                <li
-                  key={task.id}
-                  className="border rounded p-3 shadow flex justify-between items-center"
-                >
+                <li key={task.id} className="border rounded p-3 shadow flex justify-between items-center">
                   <div>
                     <strong>{task.title}</strong>
                     <p className="text-sm text-gray-600">{task.description}</p>
-                    <span
-                      className={`text-xs font-medium ${
-                        task.status === "completed"
-                          ? "text-green-600"
-                          : "text-yellow-600"
-                      }`}
-                    >
+                    <span className={`text-xs font-medium ${task.status === "completed" ? "text-green-600" : "text-yellow-600"}`}>
                       {task.status}
                     </span>
                   </div>
                   <div className="space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleToggleStatus(task.id, task.status)}
-                    >
+                    <Button size="sm" variant="outline" onClick={() => handleToggleStatus(task.id, task.status)}>
                       Toggle Status
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
+                    <Button size="sm" variant="destructive" onClick={() => handleDeleteTask(task.id)}>
                       Delete
                     </Button>
                   </div>
@@ -106,12 +86,7 @@ export default function ProjectDetail() {
               ))}
             </ul>
           )}
-
-          <Button
-            variant="outline"
-            className="mt-6"
-            onClick={() => navigate("/projects")}
-          >
+          <Button variant="outline" className="mt-6" onClick={() => navigate("/projects")}>
             Back to Projects
           </Button>
         </>

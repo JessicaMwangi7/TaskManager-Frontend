@@ -1,17 +1,12 @@
-// client/src/pages/Onboarding.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
-const OPTIONS_STEP1 = ['Work', 'Personal', 'School'];
+const OPTIONS_STEP1 = ['Work','Personal','School'];
 const SUB_OPTIONS = {
-  Work: [
-    'Finance & Accounting','Sales & CRM','HR & Recruiting',
-    'Creative & Design','PMO','Marketing','Operations','Startup',
-    'Software Development','Professional Services','IT','Support','Other'
-  ],
+  Work: ['Finance & Accounting','Sales & CRM','HR & Recruiting','Creative & Design','PMO','Marketing','Operations','Startup','Software Development','Professional Services','IT','Support','Other'],
   Personal: ['Personal Use'],
   School: ['Homework','Clubs','Projects'],
 };
@@ -19,9 +14,8 @@ const SUB_OPTIONS = {
 export default function Onboarding() {
   const navigate = useNavigate();
   const { token } = useAuth();
-
-  const [step, setStep] = useState(1);
-  const [choice, setChoice] = useState('');
+  const [step, setStep]       = useState(1);
+  const [choice, setChoice]   = useState('');
   const [subChoice, setSubChoice] = useState('');
 
   const handleNext = async () => {
@@ -30,8 +24,6 @@ export default function Onboarding() {
       setSubChoice('');
       return;
     }
-
-    // Step 2 → finalize
     try {
       await API.post(
         '/user/preferences',
@@ -39,27 +31,20 @@ export default function Onboarding() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (e) {
-      console.error('Failed to save onboarding choices:', e.response?.data || e);
-      // we still navigate on failure
+      console.error('Onboarding save failed:', e.response?.data || e);
     }
     navigate('/home');
   };
 
   const handleBack = () => {
-    if (step === 1) {
-      navigate('/home');
-    } else {
-      setStep(1);
-    }
+    if (step === 1) navigate('/home');
+    else setStep(1);
   };
 
-  const currentOptions = step === 1
-    ? OPTIONS_STEP1
-    : SUB_OPTIONS[choice] || [];
+  const currentOptions = step === 1 ? OPTIONS_STEP1 : SUB_OPTIONS[choice] || [];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      {/* Progress bar */}
       <div className="w-full max-w-2xl mb-8">
         <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
           <div
@@ -77,17 +62,13 @@ export default function Onboarding() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8 max-w-2xl">
         {currentOptions.map(opt => {
-          const isSelected = step === 1
-            ? choice === opt
-            : subChoice === opt;
+          const selected = step === 1 ? choice === opt : subChoice === opt;
           return (
             <button
               key={opt}
               onClick={() => step === 1 ? setChoice(opt) : setSubChoice(opt)}
               className={`py-2 px-4 border rounded-lg text-center whitespace-nowrap ${
-                isSelected
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-primary border-primary'
+                selected ? 'bg-primary text-white' : 'bg-white text-primary border-primary'
               }`}
             >
               {opt}
@@ -97,9 +78,7 @@ export default function Onboarding() {
       </div>
 
       <div className="flex w-full max-w-2xl justify-between">
-        <Button variant="outline" onClick={handleBack} className="px-6">
-          Back
-        </Button>
+        <Button variant="outline" onClick={handleBack} className="px-6">Back</Button>
         <Button
           onClick={handleNext}
           disabled={step === 1 ? !choice : !subChoice}

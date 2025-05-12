@@ -1,11 +1,10 @@
-// client/src/App.jsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
 import Navbar          from "./components/navbar";
 import LandingPage     from "./pages/LandingPage";
-import Onboarding      from "./pages/Onboarding";       // ← new
+import Onboarding      from "./pages/Onboarding";
 import Home            from "./pages/Home";
 import Features        from "./pages/Features";
 import Team            from "./pages/Team";
@@ -23,8 +22,6 @@ import AdminDashboard  from "./pages/AdminDashboard";
 
 function App() {
   const { token, user } = useAuth();
-
-  // Only allow access to protected routes if logged in:
   const ProtectedRoute = ({ children }) =>
     token ? children : <Navigate to="/login" replace />;
 
@@ -41,7 +38,7 @@ function App() {
         <Route path="/login"    element={<Login />} />
         <Route path="/register" element={<Signup />} />
 
-        {/* Onboarding: choose Work/Personal/School */}
+        {/* Onboarding */}
         <Route
           path="/setup"
           element={
@@ -77,7 +74,7 @@ function App() {
           }
         />
 
-        {/* Dashboard & Resources */}
+        {/* Dashboard */}
         <Route
           path="/dashboard"
           element={
@@ -86,6 +83,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Projects */}
         <Route
           path="/create-project"
           element={
@@ -118,6 +117,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Tasks */}
         <Route
           path="/task/:id/comments"
           element={
@@ -134,6 +135,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Notifications */}
         <Route
           path="/notifications"
           element={
@@ -143,7 +146,7 @@ function App() {
           }
         />
 
-        {/* Any unknown URL → landing */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

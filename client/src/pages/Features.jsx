@@ -1,4 +1,3 @@
-// client/src/pages/Features.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -6,8 +5,6 @@ import { Button } from '@/components/ui/button';
 
 export default function Features() {
   const navigate = useNavigate();
-
-  // One-liner captions for each feature
   const tooltips = {
     1: 'Turn chaos into checklists!',
     2: 'Teamwork, but smarter!',
@@ -17,7 +14,6 @@ export default function Features() {
   return (
     <section className="py-16 bg-white text-primary">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Back to Home */}
         <button
           onClick={() => navigate('/home')}
           className="mb-8 text-sm text-primary hover:underline"
@@ -31,12 +27,8 @@ export default function Features() {
         </p>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {/* Map through features */}
-          {[1, 2, 3].map((id) => (
-            <div
-              key={id}
-              className="bg-gray-50 rounded-lg shadow-sm p-6 hover:shadow-md transition"
-            >
+          {[1,2,3].map(id => (
+            <div key={id} className="bg-gray-50 rounded-lg shadow-sm p-6 hover:shadow-md transition">
               <div className="w-full h-48 rounded-lg mb-4 overflow-hidden">
                 <img
                   src={`/images/features-photo${id}.jpg`}
@@ -45,25 +37,15 @@ export default function Features() {
                 />
               </div>
               <h3 className="text-xl font-semibold mb-2">
-                {
-                  {
-                    1: 'Task Management',
-                    2: 'Team Collaboration',
-                    3: 'Accountability Tracking'
-                  }[id]
-                }
+                { id===1 ? 'Task Management' : id===2 ? 'Team Collaboration' : 'Accountability Tracking' }
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {
-                  {
-                    1: 'Create, assign, update, and track tasks within projects and teams.',
-                    2: 'Real-time collaboration with notifications and shared boards.',
-                    3: 'Monitor progress, deadlines, and task completion across your team.'
-                  }[id]
-                }
+                { id===1
+                  ? 'Create, assign, update, and track tasks within projects and teams.'
+                  : id===2
+                  ? 'Real-time collaboration with notifications and shared boards.'
+                  : 'Monitor progress, deadlines, and task completion across your team.' }
               </p>
-
-              {/* Tooltip on hover */}
               <div className="relative group inline-block">
                 <Button variant="link" className="p-0 text-primary flex items-center gap-1">
                   Learn More <ArrowRight size={16} />

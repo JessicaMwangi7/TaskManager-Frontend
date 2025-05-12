@@ -1,20 +1,16 @@
-// client/src/pages/Signup.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
-import API from "../api/axios"; // ✅ shared axios instance
+import API from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 
-const Signup = () => {
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-  });
+export default function Signup() {
+  const [formData, setFormData]     = useState({ first_name: "", last_name: "", email: "", password: "" });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading]       = useState(false);
+  const { login } = useAuth();
+  const navigate  = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,11 +22,13 @@ const Signup = () => {
       toast.error("You must agree to the terms.");
       return;
     }
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const res = await API.post("/auth/signup", formData);
-      toast.success("Account created! Please log in.");
-      navigate("/login");
+      const { access_token, user } = res.data;
+      login(user, access_token);
+      toast.success("Account created! Please complete setup.");
+      navigate("/setup");
     } catch (err) {
       console.error("Signup error:", err);
       toast.error(err.response?.data?.error || "Signup failed.");
@@ -46,25 +44,22 @@ const Signup = () => {
           <h1 className="text-4xl font-bold mb-1 text-primary">Sign Up</h1>
           <p className="text-gray-600 text-sm mb-6">Create your account below.</p>
           <form onSubmit={handleSubmit} className="space-y-4">
-            { ["first_name", "last_name", "email", "password"].map((field) => (
+            {["first_name","last_name","email","password"].map(field => (
               <div key={field}>
-                <label
-                  htmlFor={field}
-                  className="text-sm font-medium text-gray-700"
-                >
-                  {field.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                <label htmlFor={field} className="text-sm font-medium text-gray-700">
+                  {field.replace("_"," ").replace(/\b\w/g,l=>l.toUpperCase())}
                 </label>
                 <input
                   id={field}
                   name={field}
-                  type={field === "email" ? "email" : field === "password" ? "password" : "text"}
+                  type={field==="email"?"email":field==="password"?"password":"text"}
                   value={formData[field]}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
-            )) }
+            ))}
             <div className="flex items-start space-x-2 pt-2">
               <input
                 id="terms"
@@ -84,15 +79,13 @@ const Signup = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
+                  Registering...
                 </>
-              ) : (
-                "Register"
-              )}
+              ) : ("Register")}
             </button>
           </form>
           <p className="text-center text-xs text-gray-600 mt-4">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link to="/login" className="text-primary font-medium hover:text-primary/90">
               Log in
             </Link>
@@ -108,6 +101,4 @@ const Signup = () => {
       </div>
     </div>
   );
-};
-
-export default Signup;
+}

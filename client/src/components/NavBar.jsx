@@ -1,7 +1,6 @@
-// client/src/components/navbar.jsx
 import React from 'react';
-import { Loader2, Bell } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Loader2, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,10 +11,10 @@ export default function Navbar() {
   return (
     <nav className="border-b border-border bg-white shadow-sm sticky top-0 z-50">
       <div className="flex h-16 items-center justify-between px-6">
-        {/* Logo + Name */}
+        {/* Logo → Landing */}
         <div
           className="flex items-center space-x-2 cursor-pointer"
-          onClick={() => navigate('/')} // Go to landing page
+          onClick={() => navigate('/')}
         >
           <img
             src="/images/logo-outline.png"
@@ -25,17 +24,11 @@ export default function Navbar() {
           <span className="text-sm font-bold text-primary">TaskFlow</span>
         </div>
 
-        {/* Nav Links */}
+        {/* Links */}
         <div className="flex items-center space-x-6 text-primary">
-          <Link to="/home" className="text-sm font-medium hover:text-primary/80">
-            Home
-          </Link>
-          <Link to="/features" className="text-sm font-medium hover:text-primary/80">
-            Features
-          </Link>
-          <Link to="/team" className="text-sm font-medium hover:text-primary/80">
-            Team
-          </Link>
+          <Link to="/home"     className="text-sm font-medium hover:text-primary/80">Home</Link>
+          <Link to="/features" className="text-sm font-medium hover:text-primary/80">Features</Link>
+          <Link to="/team"     className="text-sm font-medium hover:text-primary/80">Team</Link>
 
           {isAuthenticated && (
             <Link to="/notifications" className="relative">
@@ -51,21 +44,13 @@ export default function Navbar() {
           ) : isAuthenticated ? (
             <>
               <Link to="/dashboard">
-                <Button variant="ghost" size="sm">
-                  Dashboard
-                </Button>
+                <Button variant="ghost" size="sm">Dashboard</Button>
               </Link>
-              <Button variant="ghost" size="sm" onClick={logout}>
-                Logout
-              </Button>
+              <Button variant="ghost" size="sm" onClick={logout}>Logout</Button>
             </>
           ) : (
             <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/login')}
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
                 Login
               </Button>
               <Button

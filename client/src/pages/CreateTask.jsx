@@ -4,26 +4,25 @@ import API from "../api/axios";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 
-function CreateTask() {
+export default function CreateTask() {
   const { id } = useParams(); // project id
-  const [title, setTitle] = useState("");
+  const [title, setTitle]           = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const navigate = useNavigate();
+  const [dueDate, setDueDate]       = useState("");
+  const navigate                      = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.post(`/tasks/${id}/tasks`, {
+      await API.post(`/projects/${id}/tasks`, {
         title,
         description,
         due_date: dueDate,
       });
       toast.success("Task created!");
-      navigate(`/project/${id}`); // ✅ back to project page
-    } catch (err) {
-      console.error("Task create error:", err);
-      toast.error(err.response?.data?.error || "Failed to create task.");
+      navigate(`/projects/${id}`);
+    } catch {
+      toast.error("Failed to create task.");
     }
   };
 
@@ -69,5 +68,3 @@ function CreateTask() {
     </div>
   );
 }
-
-export default CreateTask;

@@ -1,4 +1,3 @@
-// client/src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -6,44 +5,33 @@ import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import API from "../api/axios";
 
-function Login() {
-  const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+  const [email, setEmail]         = useState("");
+  const [password, setPassword]   = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login }               = useAuth();
-  const navigate                = useNavigate();
+  const { login }                 = useAuth();
+  const navigate                  = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      // 1) Authenticate
       const res = await API.post("/auth/login", { email, password });
-      const { access_token, user } = res.data; 
-      // expect `user` to include: id, first_name, ..., onboarding_completed
-
+      const { access_token, user } = res.data;
       if (!access_token) {
         toast.error("No token received.");
         return;
       }
-
-      // 2) Store in context
       login(user, access_token);
       toast.success(`Welcome${user.first_name ? `, ${user.first_name}` : ""}!`);
-
-      // 3) Redirect: onboarding if needed, otherwise home
-      if (user.onboarding_completed) {
-        navigate("/home");
-      } else {
-        navigate("/setup");
-      }
+      navigate(user.onboarding_completed ? "/home" : "/setup");
     } catch (err) {
       console.error("Login error:", err);
-      const errorMsg =
+      toast.error(
         err.response?.data?.error ||
         err.response?.data?.message ||
-        "Login failed.";
-      toast.error(errorMsg);
+        "Login failed."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -116,5 +104,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;

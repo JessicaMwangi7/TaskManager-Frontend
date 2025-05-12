@@ -1,20 +1,19 @@
-// /src/pages/Notifications.jsx
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import API from "../api/axios";
 import { toast } from "react-toastify";
 
-function Notifications() {
+export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    async function fetchNotifications() {
       try {
         const res = await API.get("/notifications");
-        setNotifications(res.data);
-      } catch (err) {
+        setNotifications(res.data.notifications || res.data);
+      } catch {
         toast.error("Failed to load notifications.");
       }
-    };
+    }
     fetchNotifications();
   }, []);
 
@@ -45,5 +44,3 @@ function Notifications() {
     </div>
   );
 }
-
-export default Notifications;
