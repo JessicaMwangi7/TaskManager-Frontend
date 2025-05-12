@@ -1,0 +1,16 @@
+# Node & Vite
+/client/node_modules/
+/client/dist/
+/client/.env
+
+# Python & Flask
+/server/venv/
+/server/instance/
+/server/*.pyc
+/server/migrations/
+
+# OS
+.DS_Store
+
+# Python virtualenv
+/server/venv/

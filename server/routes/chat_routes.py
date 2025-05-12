@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 
-chat_bp = Blueprint("chat", __name__)
+chat_bp = Blueprint('chat_bp', __name__)
 
-@chat_bp.route("/test", methods=["GET"])
+@chat_bp.route('/test', methods=['GET'])
 def test_chat():
-    return {"message": "Chat route is working!"}
+    return jsonify({'message': 'Chat route is working!'}), 200

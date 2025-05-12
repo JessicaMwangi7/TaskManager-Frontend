@@ -1,12 +1,38 @@
-import { Button } from "@/components/ui/Button";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/Button';
+import API from '../api/axios';
 
 export default function Hero() {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSubscribe = async e => {
+    e.preventDefault();
+    setMessage('');
+    if (!newsletterEmail) {
+      setMessage('Please enter a valid email.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await API.post('/newsletter', { email: newsletterEmail });
+      setMessage('Thank you for subscribing!');
+      setNewsletterEmail('');
+    } catch {
+      setMessage('Subscription failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background px-4 py-12 md:px-6 lg:px-8 text-primary">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Left Column */}
-          <div className="flex flex-col justify-center space-y-6">
+        {/* 3️⃣ No static “TaskFlow” here */}
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+          <div className="space-y-6">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-4xl">
               Collaborate, Track, and Stay Accountable with TaskFlow
             </h1>
@@ -14,27 +40,24 @@ export default function Hero() {
               TaskFlow empowers teams to manage tasks, collaborate in real-time,
               and stay accountable — all in one simple, powerful platform.
             </p>
-
-            <p className="text-gray-600 text-sm md:text-base">
-              Empower your team. Collaborate. Deliver on time. Achieve more together.
-            </p>
-
-            <div className="flex gap-4">
-              <Button className="bg-primary text-white hover:bg-primary/90" size="lg">
-                Get Started
-              </Button>
-              <Button
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10"
-                size="lg"
-              >
-                Learn More
-              </Button>
+            <div className="flex flex-wrap gap-4">
+              <Link to="/signup">
+                <Button size="lg" className="bg-primary text-white hover:bg-primary/90">
+                  Get Started
+                </Button>
+              </Link>
+              <Link to="/features">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-primary text-primary hover:bg-primary/10"
+                >
+                  Learn More
+                </Button>
+              </Link>
             </div>
           </div>
-
-          {/* Right Column - updated */}
-          <div className="flex items-center justify-center">
+          <div className="flex justify-center">
             <img
               src="/images/Homepage-photo.jpg"
               alt="TaskFlow Preview"
@@ -43,35 +66,39 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Newsletter Section */}
+        {/* Newsletter */}
         <div className="mt-16 text-center">
           <h2 className="text-2xl font-semibold mb-2">Stay Updated!</h2>
           <p className="text-gray-600 mb-4">
             Join our newsletter for the latest tips and updates on managing your workflow effectively.
           </p>
-          <div className="flex justify-center items-center gap-2 max-w-md mx-auto">
+          <form
+            onSubmit={handleSubscribe}
+            className="flex flex-col sm:flex-row justify-center items-center gap-2 max-w-md mx-auto"
+          >
             <input
               type="email"
+              value={newsletterEmail}
+              onChange={e => setNewsletterEmail(e.target.value)}
               placeholder="Your Email Here"
-              className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+              required
+              className="w-full sm:flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
             />
-            <Button className="bg-primary text-white hover:bg-primary/90">
-              Join Now
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
+            >
+              {loading ? 'Joining…' : 'Join Now'}
             </Button>
-          </div>
+          </form>
+          {message && <p className="mt-2 text-sm text-blue-600">{message}</p>}
           <p className="text-xs text-gray-500 mt-2">
-            By clicking Join Now, you agree to our <a href="#" className="underline">Terms and Conditions</a>.
+            By clicking Join Now, you agree to our{' '}
+            <a href="#" className="underline">
+              Terms and Conditions
+            </a>.
           </p>
-        </div>
-
-        {/* Contact Section */}
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl font-semibold mb-2">Connect With Us</h2>
-          <p className="text-gray-600 text-sm mb-4">Here to support and assist you.</p>
-          <div className="flex flex-col items-center gap-1 text-sm">
-            <p><strong>Email:</strong> hello@taskflow.com</p>
-            <p><strong>Phone:</strong> +2540123456789</p>
-          </div>
         </div>
       </div>
     </div>

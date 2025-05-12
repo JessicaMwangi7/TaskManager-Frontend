@@ -1,48 +1,150 @@
+// client/src/App.jsx
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import Features from "./pages/Features";
-import Team from "./pages/Team";
-import Chat from "./pages/Chat";
-import Projects from "./pages/Projects";
-import Project from "./pages/Project";
-import Notifications from "./pages/Notifications";
-import CreateProject from "./pages/CreateProject";
-import CreateTask from "./pages/CreateTask"; // ✅ ADDED import
-import TaskComments from "./pages/TaskComments";
 import { useAuth } from "./context/AuthContext";
 
-function App() {
-  const { token } = useAuth();
+import Navbar          from "./components/navbar";
+import LandingPage     from "./pages/LandingPage";
+import Onboarding      from "./pages/Onboarding";       // ← new
+import Home            from "./pages/Home";
+import Features        from "./pages/Features";
+import Team            from "./pages/Team";
+import Login           from "./pages/Login";
+import Signup          from "./pages/Signup";
+import Dashboard       from "./pages/Dashboard";
+import Projects        from "./pages/projects";
+import ProjectDetail   from "./pages/ProjectDetail";
+import CreateProject   from "./pages/CreateProject";
+import CreateTask      from "./pages/CreateTask";
+import ChatRoom        from "./pages/ChatRoom";
+import Notifications   from "./pages/Notifications";
+import TaskComments    from "./components/Task/TaskComments";
+import AdminDashboard  from "./pages/AdminDashboard";
 
+function App() {
+  const { token, user } = useAuth();
+
+  // Only allow access to protected routes if logged in:
   const ProtectedRoute = ({ children }) =>
-    token ? children : <Navigate to="/login" />;
+    token ? children : <Navigate to="/login" replace />;
 
   return (
     <>
       <Navbar />
+
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/team" element={<Team />} />
+        {/* Public Landing */}
+        <Route path="/" element={<LandingPage />} />
 
-        {/* ✅ PROTECTED ROUTES */}
-        <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/create-project" element={<ProtectedRoute><CreateProject /></ProtectedRoute>} />
-        <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
-        <Route path="/projects/:id" element={<ProtectedRoute><Project /></ProtectedRoute>} />
-        <Route path="/project/:id/add-task" element={<ProtectedRoute><CreateTask /></ProtectedRoute>} /> {/* ✅ NEW TASK ROUTE */}
-        <Route path="/task/:id/comments" element={<ProtectedRoute><TaskComments /></ProtectedRoute>} />
-
-        {/* ✅ AUTH ROUTES */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* Authentication */}
+        <Route path="/signup"   element={<Signup />} />
+        <Route path="/login"    element={<Login />} />
         <Route path="/register" element={<Signup />} />
+
+        {/* Onboarding: choose Work/Personal/School */}
+        <Route
+          path="/setup"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Main App */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/features"
+          element={
+            <ProtectedRoute>
+              <Features />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/team"
+          element={
+            <ProtectedRoute>
+              <Team />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Dashboard & Resources */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              {user?.role === "admin" ? <AdminDashboard /> : <Dashboard />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-project"
+          element={
+            <ProtectedRoute>
+              <CreateProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <Projects />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:id"
+          element={
+            <ProtectedRoute>
+              <ProjectDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:id/add-task"
+          element={
+            <ProtectedRoute>
+              <CreateTask />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/task/:id/comments"
+          element={
+            <ProtectedRoute>
+              <TaskComments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/:projectId"
+          element={
+            <ProtectedRoute>
+              <ChatRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Any unknown URL → landing */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );
