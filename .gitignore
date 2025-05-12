@@ -11,6 +11,3 @@
 
 # OS
 .DS_Store
-
-# Python virtualenv
-/server/venv/
